@@ -42,7 +42,7 @@ void Simulation::print(const int &time) const {
     std::cout << time << ": ";
     std::vector<double> vals = _network->sorted_values();
     for (auto I : vals) std::cout << I << " ";
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 }
 
 void Simulation::step() const {
@@ -52,8 +52,9 @@ void Simulation::step() const {
     for (size_t node=0; node<next_values.size(); node++) {
         double cumul_neighbs = 0;
         for (auto I : _network->neighbors(node)) cumul_neighbs += _network->value(I);
-        double ddeg(_network->degree(node));
-        next_values[node] = epsilon[node]*cumul_neighbs/ddeg+(1-epsilon[node])*_network->value(node);
+        double ddeg(_network->degree(node)); 
+        if (ddeg > .5)
+            next_values[node] = epsilon[node]*cumul_neighbs/ddeg+(1-epsilon[node])*_network->value(node);
     }
     _network->set_values(next_values);
 }
